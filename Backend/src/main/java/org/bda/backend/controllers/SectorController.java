@@ -1,4 +1,4 @@
 package org.bda.backend.controllers;
 
-public class CategoriaController {
+public class SectorController {
 }

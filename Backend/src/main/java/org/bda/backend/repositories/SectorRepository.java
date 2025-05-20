@@ -1,4 +1,4 @@
 package org.bda.backend.repositories;
 
-public interface CategoriaRepository {
+public interface SectorRepository {
 }
