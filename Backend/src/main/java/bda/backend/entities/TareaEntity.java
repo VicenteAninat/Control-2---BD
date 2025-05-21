@@ -22,7 +22,9 @@ public class TareaEntity {
     private String descripcion;
     private Date fechaVencimiento;
     private Boolean completado;
-    private Long usuarioId;
+
+    @Column(name = "usuario_id")
+    private Long usuario_id;
 
     @Column(name = "sector_id")
     private Long sector_id;
