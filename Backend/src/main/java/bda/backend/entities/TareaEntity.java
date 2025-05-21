@@ -1,4 +1,4 @@
-package org.bda.backend.entities;
+package bda.backend.entities;
 
 import jakarta.persistence.*;
 import lombok.*;

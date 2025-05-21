@@ -1,8 +1,8 @@
-package org.bda.backend.entities;
+package bda.backend.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.geo.Point;
+import org.locationtech.jts.geom.Point;
 
 
 @Entity
@@ -10,15 +10,19 @@ import org.springframework.data.geo.Point;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
-
+@Builder
 public class UsuarioEntity {
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(unique = true, nullable = false)
     private String username;
+
+    @Column(nullable = false)
     private String password;
+
+    @Column(nullable = false)
     private Point location;
 }
