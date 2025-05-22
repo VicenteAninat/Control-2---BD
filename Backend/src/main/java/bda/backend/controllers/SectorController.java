@@ -19,10 +19,8 @@ public class SectorController {
     private final SectorService sectorService;
 
     @PostMapping("/guardar")
-    public void crearSector() {
-        public void crearSector(@RequestBody SectorEntity sector) {
-            sectorService.guardarSector(sector);
-        }
+    public void crearSector(@RequestBody SectorEntity sector) {
+        sectorService.guardarSector(sector);
     }
 
     @PostMapping("/eliminar")
@@ -31,7 +29,7 @@ public class SectorController {
     }
 
     @PostMapping("/")
-    public List<SectorEntity> obtenerTodos() {
+    public List<SectorEntity> obtenerSectores() {
         return sectorService.obtenerSectores();
     }
 }
