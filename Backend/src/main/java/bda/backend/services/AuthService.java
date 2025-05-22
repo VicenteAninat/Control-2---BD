@@ -23,7 +23,7 @@ public class AuthService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
-    public TokenResponse register(final RegisterRequest request) {
+    public void register(final RegisterRequest request) {
         GeometryFactory geometryFactory = new GeometryFactory();
         Point direccion = geometryFactory.createPoint(new Coordinate(request.longitude(), request.latitude()));
         direccion.setSRID(4326);
@@ -35,9 +35,6 @@ public class AuthService {
                 .build();
 
         usuarioRepository.save(cliente);
-
-        var jwtToken = jwtService.generateToken(cliente);
-        return new TokenResponse(jwtToken);
     }
 
     public TokenResponse login(LoginRequest request){

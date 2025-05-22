@@ -3,8 +3,8 @@
         <form clas="form-container" @submit.prevent="handleLogin">
             <h1 class="h3 mb-3 fw-normal title" style="text-align: center;">Iniciar Sesión</h1>
             <div class="form-floating">
-                <input v-model="username" type="username" class="form-control" id="floatingInput"
-                    placeholder="Username" required>
+                <input v-model="username" type="username" class="form-control" id="floatingInput" placeholder="Username"
+                    required>
                 <label for="floatingInput">Username</label>
             </div>
             <div class="form-floating">
@@ -29,24 +29,35 @@ const router = useRouter()
 const { $apiClient } = useNuxtApp()
 
 const handleLogin = async () => {
-    try {
-        const response = await $apiClient.post(API_ROUTES.LOGIN, {
-            username: username.value,
-            password: password.value
-        })
-
-        const access_token = response.data.access_token // Obtener el token de la respuesta
-
-        if (!access_token) {
-            alert('Error: Token no recibido')
-            return
-        }
-        localStorage.setItem('access_token', access_token)
-        router.push('/') // Redirigir a la página principal
-    } catch (error) {
-        console.error('Error:', error)
-        alert(error.response?.data?.message || 'Error al iniciar sesión')
+    if (navigator.geolocation) {
+        alert('Geolocalización no soportada')
+        return
     }
+
+    navigator.geolocation.getCurrentPosition(async (position) => {
+        try {
+            const response = await $apiClient.post(API_ROUTES.LOGIN, {
+                username: username.value,
+                password: password.value,
+                latitude: position.coords.latitude,
+                longitude: position.coords.longitude
+            })
+
+            const access_token = response.data.access_token
+
+            if (!access_token) {
+                alert('Error: Token no recibido')
+                return
+            }
+            localStorage.setItem('access_token', access_token)
+            router.push('/')
+        } catch (error) {
+            console.error('Error:', error)
+            alert(error.response?.data?.message || 'Error al iniciar sesión')
+        }
+    }, (error) => {
+        alert('No se pudo obtener la ubicación: ' + error.message)
+    })
 }
 
 const refreshToken = async () => {

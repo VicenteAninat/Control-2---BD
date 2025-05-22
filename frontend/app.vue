@@ -1,10 +1,11 @@
 <template>
   <div>
     <header>
-      <h1>Mi Aplicación</h1>
-      <nav>
+      <h1 style="margin-bottom: 0;">Mi Aplicación</h1>
+      <nav style="display: flex; gap: 16px; justify-content: center; margin-bottom: 20px;">
         <nuxt-link to="/" class="btn btn-link">Inicio</nuxt-link>
         <nuxt-link to="/login" class="btn btn-link">Iniciar Sesión</nuxt-link>
+        <nuxt-link to="/register" class="btn btn-link">Registrar</nuxt-link>
       </nav>
     </header>
     <main>
@@ -15,7 +16,6 @@
     </footer>
   </div>
 </template>
-
 
 <script setup>
 import { handleLogout } from './src/services/authService'
@@ -28,5 +28,4 @@ const router = useRouter()
 const logoutUser = async () => {
   await handleLogout($apiClient, router)
 }
-
 </script>
