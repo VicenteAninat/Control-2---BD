@@ -10,7 +10,7 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/tarea")
- @RequiredArgsConstructor
+@RequiredArgsConstructor
 public class TareaController {
 
     private final TareaService tareaService;

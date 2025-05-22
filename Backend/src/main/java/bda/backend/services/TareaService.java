@@ -21,12 +21,12 @@ public class TareaService {
     public void guardarTarea(TareaEntity tarea) {
         // Validación de campos obligatorios
         if (tarea == null || tarea.getNombre() == null || tarea.getDescripcion() == null ||
-                tarea.getFechaVencimiento() == null || tarea.getUsuarioId() == null || tarea.getSector_id() == null) {
+                tarea.getFechaVencimiento() == null || tarea.getUsuario_id() == null || tarea.getSector_id() == null) {
             throw new IllegalArgumentException("Campos obligatorios faltantes");
         }
 
         // Validar existencia de usuario y sector
-        if (!usuarioRepository.existsById(tarea.getUsuarioId())) {
+        if (!usuarioRepository.existsById(tarea.getUsuario_id())) {
             throw new IllegalArgumentException("El usuario no existe");
         }
         if (!sectorRepository.existsById(tarea.getSector_id())) {
@@ -49,7 +49,7 @@ public class TareaService {
             existente.setDescripcion(tarea.getDescripcion());
             existente.setFechaVencimiento(tarea.getFechaVencimiento());
             existente.setSector_id(tarea.getSector_id());
-            existente.setUsuarioId(tarea.getUsuarioId());
+            existente.setUsuario_id(tarea.getUsuario_id());
             existente.setCompletado(tarea.getCompletado());
             tareaRepository.save(existente);
         } else {
