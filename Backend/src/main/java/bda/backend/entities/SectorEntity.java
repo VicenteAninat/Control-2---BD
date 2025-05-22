@@ -2,6 +2,7 @@ package bda.backend.entities;
 
 import jakarta.persistence.*;
 import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.Point;
 
 public class SectorEntity {
 
@@ -11,5 +12,5 @@ public class SectorEntity {
 
     private String nombre;
     private String descripcion;
-    private Geometry ubicacion;
+    private Point ubicacion;
 }

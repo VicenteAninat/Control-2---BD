@@ -22,7 +22,7 @@ CREATE TABLE Sector
   id BIGSERIAL NOT NULL,
   nombre VARCHAR(255) NOT NULL,
   descripcion VARCHAR(255) NOT NULL,
-  ubicacion GEOMETRY NOT NULL,
+  ubicacion GEOMETRY(Point) NOT NULL,
   PRIMARY KEY (id)
 );
 
