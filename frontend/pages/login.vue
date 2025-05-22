@@ -1,18 +1,18 @@
 <template>
-    <div class="container">
-        <form @submit.prevent="handleLogin">
-            <h1 class="h3 mb-3 fw-normal">Iniciar Sesión</h1>
+    <div class="container" style="margin-top: 60px;">
+        <form clas="form-container" @submit.prevent="handleLogin">
+            <h1 class="h3 mb-3 fw-normal title" style="text-align: center;">Iniciar Sesión</h1>
             <div class="form-floating">
-                <input v-model="email" type="email" class="form-control" id="floatingInput"
-                    placeholder="name@example.com" required>
-                <label for="floatingInput">username</label>
+                <input v-model="username" type="username" class="form-control" id="floatingInput"
+                    placeholder="Username" required>
+                <label for="floatingInput">Username</label>
             </div>
             <div class="form-floating">
                 <input v-model="password" type="password" class="form-control" id="floatingPassword"
                     placeholder="Password" required>
                 <label for="floatingPassword">Contraseña</label>
             </div>
-            <button class="btn btn-primary w-100 py-2" type="submit">Iniciar Sesión</button>
+            <button class="btn btn-primary w-100 py-2" type="submit" style="margin-top: 20px;">Iniciar Sesión</button>
         </form>
     </div>
 </template>
@@ -22,7 +22,6 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useNuxtApp } from '#app'
 import API_ROUTES from '../src/api-routes.js'
-import { handleLogout } from '../src/services/authService.ts'
 
 const username = ref('')
 const password = ref('')
@@ -52,14 +51,14 @@ const handleLogin = async () => {
 
 const refreshToken = async () => {
     try {
-        const refresh_token = localStorage.getItem('refresh_token')
-        if (!refresh_token) {
+        const access_token = localStorage.getItem('access_token')
+        if (!access_token) {
             alert('No estás autenticado.')
             return
         }
         const response = await $apiClient.post(API_ROUTES.REFRESH_TOKEN, null, {
             headers: {
-                Authorization: `Bearer ${refresh_token}`
+                Authorization: `Bearer ${access_token}`
             }
         })
         const new_access_token = response.data.access_token // Obtener el nuevo token de acceso de la respuesta
