@@ -3,14 +3,14 @@ package bda.backend.controllers;
 import bda.backend.entities.UsuarioEntity;
 import bda.backend.services.UsuarioService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-@Controller
+@RestController
 @RequestMapping("/usuario")
 @RequiredArgsConstructor
 public class UsuarioController {

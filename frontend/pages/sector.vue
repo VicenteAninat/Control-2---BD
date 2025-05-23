@@ -4,7 +4,7 @@
     <h1 class="title">Gestión de Sectores</h1>
     <div style="display: flex; gap: 12px; margin-bottom: 20px;">
       <button @click="mostrarCrear = true">Crear Sector</button>
-      <button @click="fetchSectores">Ver Todos</button>
+      <button @click="mostrarTablaSectores">Ver Todos</button>
     </div>
 
     <!-- Formulario para crear o editar sector -->
@@ -25,7 +25,7 @@
       <button @click="cancelarEdicion">Cancelar</button>
     </div>
 
-    <table class="table">
+    <table v-if="mostrarTabla" class="table">
       <thead>
         <tr>
           <th>ID</th>
@@ -41,8 +41,8 @@
           <td>{{ sector.nombre }}</td>
           <td>{{ sector.descripcion }}</td>
           <td>
-            <span v-if="sector.ubicacion">
-              Lat: {{ sector.ubicacion.coordinates[1] }}, Lng: {{ sector.ubicacion.coordinates[0] }}
+            <span v-if="sector.latitude && sector.longitude">
+              Lat: {{ sector.latitude }}, Lng: {{ sector.longitude }}
             </span>
           </td>
           <td>
@@ -66,6 +66,7 @@ const { $apiClient } = useNuxtApp()
 const sectores = ref([])
 const mostrarCrear = ref(false)
 const sectorEditar = ref(null)
+const mostrarTabla = ref(false)
 const form = ref({
   nombre: '',
   descripcion: '',
@@ -78,11 +79,17 @@ let marker = null
 
 const fetchSectores = async () => {
   try {
-    const response = await $apiClient.post(API_ROUTES.SECTOR + '/')
+    const response = await $apiClient.get(API_ROUTES.SECTOR + '/')
     sectores.value = response.data
+    console.log('Sectores:', sectores.value)
   } catch (e) {
     alert('No se pudieron cargar los sectores')
   }
+}
+
+const mostrarTablaSectores = async () => {
+  await fetchSectores()
+  mostrarTabla.value = true
 }
 
 const crearSector = async () => {
@@ -95,14 +102,11 @@ const crearSector = async () => {
     await $apiClient.post(API_ROUTES.SECTOR + '/guardar', {
       nombre: form.value.nombre,
       descripcion: form.value.descripcion,
-      ubicacion: {
-        type: 'Point',
-        coordinates: [form.value.longitude, form.value.latitude]
-      }
+      latitude: form.value.latitude,
+      longitude: form.value.longitude
     })
     mostrarCrear.value = false
     limpiarForm()
-    fetchSectores()
   } catch (e) {
     alert('Error al crear sector')
   }
@@ -115,17 +119,17 @@ const editarSector = async () => {
   }
   try {
     await $apiClient.post(API_ROUTES.SECTOR + '/guardar', {
-      id: sectorEditar.value.id,
+      id: form.value.id,
       nombre: form.value.nombre,
       descripcion: form.value.descripcion,
-      ubicacion: {
-        type: 'Point',
-        coordinates: [form.value.longitude, form.value.latitude]
-      }
+      latitude: form.value.latitude,
+      longitude: form.value.longitude
     })
     sectorEditar.value = null
     limpiarForm()
-    fetchSectores()
+    if (mostrarTabla.value) {
+      await fetchSectores()
+    }
   } catch (e) {
     alert('Error al editar sector')
   }
@@ -135,7 +139,9 @@ const eliminarSector = async (id) => {
   if (!confirm('¿Seguro que deseas eliminar este sector?')) return
   try {
     await $apiClient.post(API_ROUTES.SECTOR + '/eliminar', id)
-    fetchSectores()
+    if (mostrarTabla.value) {
+      await fetchSectores()
+    }
   } catch (e) {
     alert('Error al eliminar sector')
   }
@@ -150,6 +156,7 @@ const limpiarForm = () => {
 const prepararEdicion = (sector) => {
   sectorEditar.value = sector
   form.value = {
+    id: sector.id,
     nombre: sector.nombre,
     descripcion: sector.descripcion,
     latitude: sector.ubicacion?.coordinates[1] || null,
@@ -163,7 +170,6 @@ const cancelarEdicion = () => {
   limpiarForm()
 }
 
-// --- NUEVO: Inicializar el mapa cada vez que se muestre el formulario ---
 const initMap = () => {
   // Destruir mapa anterior si existe
   if (map) {
@@ -211,6 +217,5 @@ watch([mostrarCrear, sectorEditar], ([nuevoCrear, nuevoEditar]) => {
 })
 
 onMounted(() => {
-  fetchSectores()
 })
 </script>

@@ -9,9 +9,7 @@ import org.locationtech.jts.geom.Point;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
-
+@Builder
 public class SectorEntity {
 
     @Id

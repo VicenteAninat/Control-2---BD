@@ -1,6 +1,7 @@
 package bda.backend.services;
 
 import bda.backend.config.SectorRequest;
+import bda.backend.dto.SectorDTO;
 import bda.backend.entities.SectorEntity;
 import bda.backend.repositories.SectorRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +23,15 @@ public class SectorService {
                 new org.locationtech.jts.geom.Coordinate(sector.longitude(), sector.latitude())
         );
         ubicacion.setSRID(4326);
-
+        if (sector.id() != null) {
+            SectorEntity sectorEntity = sectorRepository.findById(sector.id())
+                    .orElseThrow(() -> new IllegalArgumentException("El sector no existe"));
+            sectorEntity.setNombre(sector.nombre());
+            sectorEntity.setDescripcion(sector.descripcion());
+            sectorEntity.setUbicacion(ubicacion);
+            sectorRepository.save(sectorEntity);
+            return;
+        }
         SectorEntity sectorEntity = new SectorEntity();
         sectorEntity.setNombre(sector.nombre());
         sectorEntity.setDescripcion(sector.descripcion());
@@ -35,7 +44,15 @@ public class SectorService {
         sectorRepository.deleteById(id);
     }
 
-    public List<SectorEntity> obtenerSectores() {
-        return sectorRepository.findAll();
+    public List<SectorDTO> obtenerSectores() {
+        return sectorRepository.findAll().stream().map(sector -> {
+            SectorDTO dto = new SectorDTO();
+            dto.setId(sector.getId());
+            dto.setNombre(sector.getNombre());
+            dto.setDescripcion(sector.getDescripcion());
+            dto.setLatitude(sector.getUbicacion().getY());
+            dto.setLongitude(sector.getUbicacion().getX());
+            return dto;
+        }).toList();
     }
 }

@@ -1,17 +1,14 @@
 package bda.backend.controllers;
 
 import bda.backend.config.SectorRequest;
-import bda.backend.entities.SectorEntity;
+import bda.backend.dto.SectorDTO;
 import bda.backend.services.SectorService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Controller
+@RestController
 @RequestMapping("/sector")
 @RequiredArgsConstructor
 public class SectorController {
@@ -28,8 +25,8 @@ public class SectorController {
         sectorService.eliminarSector(id);
     }
 
-    @PostMapping("/")
-    public List<SectorEntity> obtenerSectores() {
+    @GetMapping("/")
+    public List<SectorDTO> obtenerSectores() {
         return sectorService.obtenerSectores();
     }
 }
