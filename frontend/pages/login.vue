@@ -44,12 +44,14 @@ const handleLogin = async () => {
             })
 
             const access_token = response.data.access_token
+            const usuario_id = response.data.usuario_id
 
             if (!access_token) {
                 alert('Error: Token no recibido')
                 return
             }
             localStorage.setItem('access_token', access_token)
+            localStorage.setItem('usuario_id', usuario_id)
             router.push('/panel')
         } catch (error) {
             console.error('Error:', error)

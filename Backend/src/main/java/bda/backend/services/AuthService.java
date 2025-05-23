@@ -46,7 +46,7 @@ public class AuthService {
         );
         var cliente = usuarioRepository.findByUsername(request.username());
         var jwtToken = jwtService.generateToken(cliente);
-        return new TokenResponse(jwtToken);
+        return new TokenResponse(jwtToken, cliente.getId());
     }
 
     public TokenResponse refreshToken( String authHeader) {
@@ -63,6 +63,6 @@ public class AuthService {
             throw new IllegalArgumentException("Invalid Refresh Token");
         }
         var jwtToken = jwtService.generateToken(cliente);
-        return new TokenResponse(jwtToken);
+        return new TokenResponse(jwtToken, cliente.getId());
     }
 }

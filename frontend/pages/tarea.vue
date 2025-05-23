@@ -3,13 +3,7 @@
     <h1 class="title">Gestión de Tareas</h1>
     <div style="display: flex; gap: 12px; margin-bottom: 20px;">
       <button @click="mostrarCrear = true">Crear Tarea</button>
-      <button @click="fetchTareas">Ver Todas</button>
-      <button @click="filtrarCompletadas(true)">Ver Completadas</button>
-      <button @click="filtrarCompletadas(false)">Ver Pendientes</button>
-    </div>
-    <div style="margin-bottom: 20px;">
-      <input v-model="claveBusqueda" placeholder="Buscar por clave..." />
-      <button @click="buscarPorClave">Buscar</button>
+      <button @click="mostrarTablaTareas">Ver Todas</button>
     </div>
 
     <!-- Formulario para crear o editar tarea -->
@@ -30,34 +24,44 @@
       <button @click="cancelarEdicion">Cancelar</button>
     </div>
 
-    <table class="table">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Nombre</th>
-          <th>Descripción</th>
-          <th>Fecha Vencimiento</th>
-          <th>Completado</th>
-          <th>Sector</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="tarea in tareas" :key="tarea.id">
-          <td>{{ tarea.id }}</td>
-          <td>{{ tarea.nombre }}</td>
-          <td>{{ tarea.descripcion }}</td>
-          <td>{{ tarea.fechaVencimiento ? tarea.fechaVencimiento.substring(0,10) : '' }}</td>
-          <td>{{ tarea.completado ? 'Sí' : 'No' }}</td>
-          <td>{{ nombreSector(tarea.sector_id) }}</td>
-          <td>
-            <button @click="completarTarea(tarea.id)" v-if="!tarea.completado">Completar</button>
-            <button @click="prepararEdicion(tarea)">Editar</button>
-            <button @click="eliminarTarea(tarea.id)">Eliminar</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <!-- Filtros y tabla solo si mostrarTabla es true -->
+    <div v-if="mostrarTabla">
+      <div style="margin-bottom: 20px;">
+        <input v-model="claveBusqueda" placeholder="Buscar por clave..." />
+        <button @click="buscarPorClave">Buscar</button>
+        <button @click="filtrarCompletadas(true)">Ver Completadas</button>
+        <button @click="filtrarCompletadas(false)">Ver Pendientes</button>
+        <button @click="fetchTareas">Ver Todas</button>
+      </div>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Descripción</th>
+            <th>Fecha Vencimiento</th>
+            <th>Completado</th>
+            <th>Sector</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="tarea in tareas" :key="tarea.id">
+            <td>{{ tarea.id }}</td>
+            <td>{{ tarea.nombre }}</td>
+            <td>{{ tarea.descripcion }}</td>
+            <td>{{ tarea.fechaVencimiento ? tarea.fechaVencimiento.substring(0,10) : '' }}</td>
+            <td>{{ tarea.completado ? 'Sí' : 'No' }}</td>
+            <td>{{ nombreSector(tarea.sector_id) }}</td>
+            <td>
+              <button @click="completarTarea(tarea.id)" v-if="!tarea.completado">Completar</button>
+              <button @click="prepararEdicion(tarea)">Editar</button>
+              <button @click="eliminarTarea(tarea.id)">Eliminar</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </template>
 
@@ -71,6 +75,7 @@ const tareas = ref([])
 const sectores = ref([])
 const mostrarCrear = ref(false)
 const tareaEditar = ref(null)
+const mostrarTabla = ref(false)
 const claveBusqueda = ref('')
 const form = ref({
   nombre: '',
@@ -82,7 +87,7 @@ const form = ref({
 // Cargar sectores al iniciar
 const fetchSectores = async () => {
   try {
-    const response = await $apiClient.get(API_ROUTES.SECTOR)
+    const response = await $apiClient.get(API_ROUTES.SECTOR + "/")
     sectores.value = response.data
   } catch (e) {
     alert('No se pudieron cargar los sectores')
@@ -99,16 +104,25 @@ const fetchTareas = async () => {
   }
 }
 
+// Mostrar tabla y cargar tareas
+const mostrarTablaTareas = async () => {
+  await fetchTareas()
+  mostrarTabla.value = true
+}
+
 // Crear tarea
 const crearTarea = async () => {
   try {
+    const usuario_id = localStorage.getItem('usuario_id')
+    console.log('Creando tarea:', form.value)
     await $apiClient.post(API_ROUTES.TAREA + '/guardar', {
       ...form.value,
+      usuario_id : usuario_id,
       completado: false
     })
     mostrarCrear.value = false
     limpiarForm()
-    fetchTareas()
+    if (mostrarTabla.value) fetchTareas()
   } catch (e) {
     alert('Error al crear tarea')
   }
@@ -117,13 +131,15 @@ const crearTarea = async () => {
 // Editar tarea
 const editarTarea = async () => {
   try {
+    const usuario_id = localStorage.getItem('usuario_id')
     await $apiClient.post(API_ROUTES.TAREA + '/guardar', {
       ...form.value,
+      usuario_id: usuario_id,
       id: tareaEditar.value.id
     })
     tareaEditar.value = null
     limpiarForm()
-    fetchTareas()
+    if (mostrarTabla.value) fetchTareas()
   } catch (e) {
     alert('Error al editar tarea')
   }
@@ -134,7 +150,7 @@ const eliminarTarea = async (id) => {
   if (!confirm('¿Seguro que deseas eliminar esta tarea?')) return
   try {
     await $apiClient.delete(API_ROUTES.TAREA + '/eliminar', { data: id })
-    fetchTareas()
+    if (mostrarTabla.value) fetchTareas()
   } catch (e) {
     alert('Error al eliminar tarea')
   }
@@ -144,7 +160,7 @@ const eliminarTarea = async (id) => {
 const completarTarea = async (id) => {
   try {
     await $apiClient.post(API_ROUTES.TAREA + '/completar', id)
-    fetchTareas()
+    if (mostrarTabla.value) fetchTareas()
   } catch (e) {
     alert('Error al completar tarea')
   }
@@ -178,11 +194,13 @@ const filtrarCompletadas = async (completado) => {
 const limpiarForm = () => {
   form.value = { nombre: '', descripcion: '', fechaVencimiento: '', sector_id: '' }
 }
+
 const prepararEdicion = (tarea) => {
   tareaEditar.value = tarea
   form.value = { ...tarea }
   mostrarCrear.value = false
 }
+
 const cancelarEdicion = () => {
   tareaEditar.value = null
   limpiarForm()
@@ -195,6 +213,5 @@ const nombreSector = (id) => {
 
 onMounted(() => {
   fetchSectores()
-  fetchTareas()
 })
 </script>
