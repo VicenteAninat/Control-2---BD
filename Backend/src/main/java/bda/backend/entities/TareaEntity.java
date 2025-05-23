@@ -6,7 +6,7 @@ import lombok.*;
 import java.sql.Date;
 
 @Entity
-@Table(name = "tareas")
+@Table(name = "tarea")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -15,7 +15,7 @@ import java.sql.Date;
 
 public class TareaEntity {
     @Id
-    @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String nombre;

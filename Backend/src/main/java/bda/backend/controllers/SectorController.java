@@ -1,6 +1,6 @@
 package bda.backend.controllers;
 
-
+import bda.backend.config.SectorRequest;
 import bda.backend.entities.SectorEntity;
 import bda.backend.services.SectorService;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +19,7 @@ public class SectorController {
     private final SectorService sectorService;
 
     @PostMapping("/guardar")
-    public void crearSector(@RequestBody SectorEntity sector) {
+    public void crearSector(@RequestBody SectorRequest sector) {
         sectorService.guardarSector(sector);
     }
 

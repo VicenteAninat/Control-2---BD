@@ -6,7 +6,7 @@ import org.locationtech.jts.geom.Point;
 
 
 @Entity
-@Table(name = "usuarios")
+@Table(name = "usuario")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

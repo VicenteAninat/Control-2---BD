@@ -5,7 +5,7 @@ import lombok.*;
 import org.locationtech.jts.geom.Point;
 
 @Entity
-@Table(name = "sectores")
+@Table(name = "sector")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -15,7 +15,7 @@ import org.locationtech.jts.geom.Point;
 public class SectorEntity {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String nombre;

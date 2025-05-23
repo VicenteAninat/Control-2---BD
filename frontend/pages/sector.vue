@@ -73,7 +73,8 @@ const form = ref({
   longitude: null
 })
 
-let map, marker
+let map = null
+let marker = null
 
 const fetchSectores = async () => {
   try {
@@ -89,6 +90,7 @@ const crearSector = async () => {
     alert('Selecciona la ubicación en el mapa')
     return
   }
+  console.log('Creando sector', form.value)
   try {
     await $apiClient.post(API_ROUTES.SECTOR + '/guardar', {
       nombre: form.value.nombre,
@@ -142,6 +144,7 @@ const eliminarSector = async (id) => {
 const limpiarForm = () => {
   form.value = { nombre: '', descripcion: '', latitude: null, longitude: null }
   if (marker) marker.remove()
+  marker = null
 }
 
 const prepararEdicion = (sector) => {
@@ -153,14 +156,6 @@ const prepararEdicion = (sector) => {
     longitude: sector.ubicacion?.coordinates[0] || null
   }
   mostrarCrear.value = false
-  setTimeout(() => {
-    if (map && form.value.latitude && form.value.longitude) {
-      const latlng = [form.value.latitude, form.value.longitude]
-      map.setView(latlng, 15)
-      if (marker) marker.setLatLng(latlng)
-      else marker = L.marker(latlng).addTo(map)
-    }
-  }, 200)
 }
 
 const cancelarEdicion = () => {
@@ -168,19 +163,54 @@ const cancelarEdicion = () => {
   limpiarForm()
 }
 
-onMounted(() => {
-  fetchSectores()
+// --- NUEVO: Inicializar el mapa cada vez que se muestre el formulario ---
+const initMap = () => {
+  // Destruir mapa anterior si existe
+  if (map) {
+    map.off()
+    map.remove()
+    map = null
+    marker = null
+  }
+  // Esperar a que el div esté en el DOM
   setTimeout(() => {
-    map = L.map('map-sector').setView([-33.45, -70.6667], 13)
+    map = L.map('map-sector').setView(
+      [
+        form.value.latitude ?? -33.45,
+        form.value.longitude ?? -70.6667
+      ],
+      13
+    )
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '© OpenStreetMap contributors'
     }).addTo(map)
+
+    // Si hay coordenadas, mostrar el marker
+    if (form.value.latitude && form.value.longitude) {
+      marker = L.marker([form.value.latitude, form.value.longitude]).addTo(map)
+      map.setView([form.value.latitude, form.value.longitude], 15)
+    }
+
     map.on('click', function (e) {
       form.value.latitude = e.latlng.lat
       form.value.longitude = e.latlng.lng
-      if (marker) marker.setLatLng(e.latlng)
-      else marker = L.marker(e.latlng).addTo(map)
+      if (marker) {
+        marker.setLatLng(e.latlng)
+      } else {
+        marker = L.marker(e.latlng).addTo(map)
+      }
     })
-  }, 200)
+  }, 100)
+}
+
+// Observar cuando se abre el formulario de crear o editar
+watch([mostrarCrear, sectorEditar], ([nuevoCrear, nuevoEditar]) => {
+  if (nuevoCrear || nuevoEditar) {
+    initMap()
+  }
+})
+
+onMounted(() => {
+  fetchSectores()
 })
 </script>

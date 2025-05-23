@@ -29,7 +29,7 @@ const router = useRouter()
 const { $apiClient } = useNuxtApp()
 
 const handleLogin = async () => {
-    if (navigator.geolocation) {
+    if (!navigator.geolocation) {
         alert('Geolocalización no soportada')
         return
     }
@@ -50,7 +50,7 @@ const handleLogin = async () => {
                 return
             }
             localStorage.setItem('access_token', access_token)
-            router.push('/')
+            router.push('/panel')
         } catch (error) {
             console.error('Error:', error)
             alert(error.response?.data?.message || 'Error al iniciar sesión')
