@@ -1,5 +1,7 @@
 package bda.backend.controllers;
 
+import bda.backend.dto.SectorTareasCompletadasDTO;
+import bda.backend.dto.TareaUsuarioSectorDTO;
 import bda.backend.entities.TareaEntity;
 import bda.backend.services.TareaService;
 import lombok.RequiredArgsConstructor;
@@ -50,12 +52,12 @@ public class TareaController {
     }
 
     @GetMapping("/conteo-usuario-sector")
-    public List<Object[]> contarTareasPorUsuarioYSector() {
-        return tareaService.contarTareasPorUsuarioYSector();
+    public List<TareaUsuarioSectorDTO> contarTareasPorUsuarioYSector() {
+        return tareaService.contarTareasPorUsuarioYSectorDTO();
     }
 
     @GetMapping("/sector-mas-tareas-radio")
-    public Object[] sectorConMasTareasCompletadasEnRadio(@RequestParam double latitud, @RequestParam double longitud) {
+    public SectorTareasCompletadasDTO sectorConMasTareasCompletadasEnRadio5KM(@RequestParam double latitud, @RequestParam double longitud) {
         return tareaService.sectorConMasTareasCompletadasEnRadio(latitud, longitud);
     }
 

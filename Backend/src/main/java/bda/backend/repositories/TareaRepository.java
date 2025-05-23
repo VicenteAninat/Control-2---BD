@@ -35,7 +35,7 @@ public interface TareaRepository extends JpaRepository<TareaEntity, Long> {
     List<Object[]> countTareasPorUsuarioYSector();
 
     @Query(value = """
-    SELECT s.*, COUNT(t.id) as total
+    SELECT s.id, COUNT(t.id) as total
     FROM sector s
     JOIN tarea t ON t.sector_id = s.id
     WHERE t.completado = true

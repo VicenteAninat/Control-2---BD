@@ -28,6 +28,10 @@
     <div v-if="mostrarTabla">
       <div style="margin-bottom: 20px;">
         <input v-model="claveBusqueda" placeholder="Buscar por clave..." />
+        <button @click="obtenerTareasPendientesCercanas">Pendientes Cercanas</button>
+        <button @click="contarTareasPorUsuarioYSector">Conteo Usuario/Sector</button>
+        <button @click="sectorConMasTareasCompletadasEnRadio">Sector +Tareas Completadas (5km)</button>
+        <button @click="promedioDistanciaTareasCompletadas">Promedio Distancia Completadas</button>
         <button @click="buscarPorClave">Buscar</button>
         <button @click="filtrarCompletadas(true)">Ver Completadas</button>
         <button @click="filtrarCompletadas(false)">Ver Pendientes</button>
@@ -50,7 +54,7 @@
             <td>{{ tarea.id }}</td>
             <td>{{ tarea.nombre }}</td>
             <td>{{ tarea.descripcion }}</td>
-            <td>{{ tarea.fechaVencimiento ? tarea.fechaVencimiento.substring(0,10) : '' }}</td>
+            <td>{{ tarea.fechaVencimiento ? tarea.fechaVencimiento.substring(0, 10) : '' }}</td>
             <td>{{ tarea.completado ? 'Sí' : 'No' }}</td>
             <td>{{ nombreSector(tarea.sector_id) }}</td>
             <td>
@@ -58,6 +62,23 @@
               <button @click="prepararEdicion(tarea)">Editar</button>
               <button @click="eliminarTarea(tarea.id)">Eliminar</button>
             </td>
+          </tr>
+        </tbody>
+      </table>
+      <!-- Tabla de conteo por usuario y sector -->
+      <table v-if="conteoUsuarioSector.length" class="table" style="margin-top: 30px;">
+        <thead>
+          <tr>
+            <th>Usuario ID</th>
+            <th>Sector ID</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="item in conteoUsuarioSector" :key="item.usuarioId + '-' + item.sectorId">
+            <td>{{ item.usuarioId }}</td>
+            <td>{{ item.sectorId }}</td>
+            <td>{{ item.total }}</td>
           </tr>
         </tbody>
       </table>
@@ -72,6 +93,7 @@ import API_ROUTES from '../src/api-routes.js'
 
 const { $apiClient } = useNuxtApp()
 const tareas = ref([])
+const conteoUsuarioSector = ref([])
 const sectores = ref([])
 const mostrarCrear = ref(false)
 const tareaEditar = ref(null)
@@ -117,7 +139,7 @@ const crearTarea = async () => {
     console.log('Creando tarea:', form.value)
     await $apiClient.post(API_ROUTES.TAREA + '/guardar', {
       ...form.value,
-      usuario_id : usuario_id,
+      usuario_id: usuario_id,
       completado: false
     })
     mostrarCrear.value = false
@@ -187,6 +209,61 @@ const filtrarCompletadas = async (completado) => {
     tareas.value = response.data
   } catch (e) {
     alert('No se encontraron tareas')
+  }
+}
+
+
+// Obtener tareas pendientes más cercanas
+const obtenerTareasPendientesCercanas = async () => {
+  const latitud = localStorage.getItem('latitude')
+  const longitud = localStorage.getItem('longitude')
+  try {
+    const response = await $apiClient.post(API_ROUTES.TAREA + '/PendientesCercana', null, {
+      params: { latitud, longitud }
+    })
+    tareas.value = response.data
+  } catch (e) {
+    alert('No se pudieron obtener las tareas pendientes cercanas')
+  }
+}
+
+// Contar tareas por usuario y sector
+const contarTareasPorUsuarioYSector = async () => {
+  try {
+    const response = await $apiClient.get(API_ROUTES.TAREA + '/conteo-usuario-sector')
+    conteoUsuarioSector.value = response.data
+  } catch (e) {
+    alert('No se pudo obtener el conteo')
+  }
+}
+
+// Sector con más tareas completadas en radio de 5km
+const sectorConMasTareasCompletadasEnRadio = async () => {
+  const latitud = localStorage.getItem('latitude')
+  const longitud = localStorage.getItem('longitude')
+  try {
+    const response = await $apiClient.get(API_ROUTES.TAREA + '/sector-mas-tareas-radio', {
+      params: { latitud, longitud }
+    })
+    // response.data es un objeto { sectorId, total }
+    console.log(response.data)
+  } catch (e) {
+    alert('No se pudo obtener el sector con más tareas completadas')
+  }
+}
+
+// Promedio de distancia de tareas completadas
+const promedioDistanciaTareasCompletadas = async () => {
+  const latitud = localStorage.getItem('latitude')
+  const longitud = localStorage.getItem('longitude')
+  try {
+    const response = await $apiClient.get(API_ROUTES.TAREA + '/promedio-distancia-completadas', {
+      params: { latitud, longitud }
+    })
+    // response.data es un número (Double)
+    console.log('Promedio distancia:', response.data)
+  } catch (e) {
+    alert('No se pudo obtener el promedio de distancia')
   }
 }
 

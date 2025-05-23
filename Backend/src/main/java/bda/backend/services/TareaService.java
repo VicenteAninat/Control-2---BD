@@ -1,5 +1,7 @@
 package bda.backend.services;
 
+import bda.backend.dto.SectorTareasCompletadasDTO;
+import bda.backend.dto.TareaUsuarioSectorDTO;
 import bda.backend.entities.TareaEntity;
 import bda.backend.repositories.SectorRepository;
 import bda.backend.repositories.TareaRepository;
@@ -92,20 +94,29 @@ public class TareaService {
     }
 
     // 2. Conteo de tareas completadas por usuario y sector
-    public List<Object[]> contarTareasPorUsuarioYSector() {
-        return tareaRepository.countTareasPorUsuarioYSector();
+    public List<TareaUsuarioSectorDTO> contarTareasPorUsuarioYSectorDTO() {
+        return tareaRepository.countTareasPorUsuarioYSector().stream()
+                .map(obj -> new TareaUsuarioSectorDTO(
+                        ((Number) obj[0]).longValue(),
+                        ((Number) obj[1]).longValue(),
+                        ((Number) obj[2]).longValue()
+                ))
+                .toList();
     }
 
     // 3. Sector con más tareas completadas en un radio
-    public Object[] sectorConMasTareasCompletadasEnRadio(double latitud, double longitud) {
-        return tareaRepository.sectorConMasTareasCompletadasEnRadio(latitud, longitud);
+    public SectorTareasCompletadasDTO sectorConMasTareasCompletadasEnRadio(double latitud, double longitud) {
+        Object[] obj = tareaRepository.sectorConMasTareasCompletadasEnRadio(latitud, longitud);
+        if (obj == null) return null;
+        return new SectorTareasCompletadasDTO(
+                ((Number) obj[0]).longValue(),
+                ((Number) obj[1]).longValue()
+        );
     }
 
     public Double promedioDistanciaTareasCompletadas(double latitud, double longitud) {
         return tareaRepository.promedioDistanciaTareasCompletadas(latitud, longitud);
     }
-
-
 
 
 }
