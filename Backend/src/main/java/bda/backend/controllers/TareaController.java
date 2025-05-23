@@ -44,4 +44,24 @@ public class TareaController {
         return tareaService.obtenerTareasPorClave(clave);
     }
 
+    @PostMapping("/PendientesCercana")
+    public List<TareaEntity> obtenerTareasPendientesCercanas(@RequestParam double latitud, @RequestParam double longitud){
+        return tareaService.obtenerTareaPendienteMasCercana(latitud, longitud);
+    }
+
+    @GetMapping("/conteo-usuario-sector")
+    public List<Object[]> contarTareasPorUsuarioYSector() {
+        return tareaService.contarTareasPorUsuarioYSector();
+    }
+
+    @GetMapping("/sector-mas-tareas-radio")
+    public Object[] sectorConMasTareasCompletadasEnRadio(@RequestParam double latitud, @RequestParam double longitud) {
+        return tareaService.sectorConMasTareasCompletadasEnRadio(latitud, longitud);
+    }
+
+    @GetMapping("/promedio-distancia-completadas")
+    public Double promedioDistanciaTareasCompletadas(@RequestParam double latitud, @RequestParam double longitud) {
+        return tareaService.promedioDistanciaTareasCompletadas(latitud, longitud);
+    }
+
 }

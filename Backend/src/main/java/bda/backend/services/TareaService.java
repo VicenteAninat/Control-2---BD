@@ -86,4 +86,26 @@ public class TareaService {
                 .filter(tarea -> tarea.getNombre().contains(clave) || tarea.getDescripcion().contains(clave))
                 .toList();
     }
+
+    public List<TareaEntity> obtenerTareaPendienteMasCercana(double latitud, double longitud) {
+        return tareaRepository.tareasPendientesMasCercanas(latitud, longitud);
+    }
+
+    // 2. Conteo de tareas completadas por usuario y sector
+    public List<Object[]> contarTareasPorUsuarioYSector() {
+        return tareaRepository.countTareasPorUsuarioYSector();
+    }
+
+    // 3. Sector con más tareas completadas en un radio
+    public Object[] sectorConMasTareasCompletadasEnRadio(double latitud, double longitud) {
+        return tareaRepository.sectorConMasTareasCompletadasEnRadio(latitud, longitud);
+    }
+
+    public Double promedioDistanciaTareasCompletadas(double latitud, double longitud) {
+        return tareaRepository.promedioDistanciaTareasCompletadas(latitud, longitud);
+    }
+
+
+
+
 }

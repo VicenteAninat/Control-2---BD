@@ -39,3 +39,7 @@ CREATE TABLE Tarea
   FOREIGN KEY (usuario_id) REFERENCES Usuario(id),
   FOREIGN KEY (sector_id) REFERENCES Sector(id)
 );
+
+-- Crear índices espaciales
+CREATE INDEX IF NOT EXISTS idx_usuario_location ON Usuario USING GIST (location);
+CREATE INDEX IF NOT EXISTS idx_sector_ubicacion ON Sector USING GIST (ubicacion);
