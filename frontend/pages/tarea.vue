@@ -24,14 +24,34 @@
       <button @click="cancelarEdicion">Cancelar</button>
     </div>
 
+    Consultas de usuario:
+    <div>
+      <button @click="mostrarConteoTareasPorSector">Mis tareas por sector</button>
+      <button @click="obtenerMiTareaMasCercana">Mi tarea pendiente más cercana</button>
+      <button @click="obtenerMiPromedioDeDistanciaDeTareas">Mi promedio de distancia de tareas completadas</button>
+      <button @click="obtenerMiSectorConMasTareas">Sector con más de mis tareas completadas</button>
+    </div>
+
+    <br>
+
+    Consultas generales:
+    <div>
+      <button @click="obtenerTareasPendientesCercanas">Tareas pendientes cercanas</button>
+      <button @click="contarTareasPorUsuarioYSector">Conteo Usuario/Sector</button>
+      <button @click="sectorConMasTareasCompletadasEnRadio">Sector +Tareas Completadas (5km)</button>
+      <button @click="promedioDistanciaTareasCompletadas">Promedio Distancia Completadas</button>
+    </div>
+
+    <br>
+
     <!-- Filtros y tabla solo si mostrarTabla es true -->
     <div v-if="mostrarTabla">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h2>Tareas</h2>
+        <button @click="mostrarTabla = false">Ocultar Tabla</button>
+      </div>
       <div style="margin-bottom: 20px;">
         <input v-model="claveBusqueda" placeholder="Buscar por clave..." />
-        <button @click="obtenerTareasPendientesCercanas">Pendientes Cercanas</button>
-        <button @click="contarTareasPorUsuarioYSector">Conteo Usuario/Sector</button>
-        <button @click="sectorConMasTareasCompletadasEnRadio">Sector +Tareas Completadas (5km)</button>
-        <button @click="promedioDistanciaTareasCompletadas">Promedio Distancia Completadas</button>
         <button @click="buscarPorClave">Buscar</button>
         <button @click="filtrarCompletadas(true)">Ver Completadas</button>
         <button @click="filtrarCompletadas(false)">Ver Pendientes</button>
@@ -113,6 +133,23 @@ const fetchSectores = async () => {
     sectores.value = response.data
   } catch (e) {
     alert('No se pudieron cargar los sectores')
+  }
+}
+
+// Mostrar tabla con tareas del usuario logeado
+const mostrarMisTareasTabla = async () => {
+  await obtenerMisTareas()
+  mostrarTabla.value = true
+}
+
+// Obtener las tareas relativas al usuario
+const obtenerMisTareas = async () => {
+  const usuario_id = localStorage.getItem('usuario_id')
+  try {
+    const response = await $apiClient.get(`${API_ROUTES.TAREA}/${usuario_id}`)
+    tareas.value = response.data
+  } catch (e) {
+    alert('No se pudieron obtener las tareas del usuario')
   }
 }
 
@@ -212,7 +249,6 @@ const filtrarCompletadas = async (completado) => {
   }
 }
 
-
 // Obtener tareas pendientes más cercanas
 const obtenerTareasPendientesCercanas = async () => {
   const latitud = localStorage.getItem('latitude')
@@ -232,10 +268,12 @@ const contarTareasPorUsuarioYSector = async () => {
   try {
     const response = await $apiClient.get(API_ROUTES.TAREA + '/conteo-usuario-sector')
     conteoUsuarioSector.value = response.data
+    console.log('Conteo Usuario/Sector:', conteoUsuarioSector.value)
   } catch (e) {
     alert('No se pudo obtener el conteo')
   }
 }
+
 
 // Sector con más tareas completadas en radio de 5km
 const sectorConMasTareasCompletadasEnRadio = async () => {
@@ -264,6 +302,54 @@ const promedioDistanciaTareasCompletadas = async () => {
     console.log('Promedio distancia:', response.data)
   } catch (e) {
     alert('No se pudo obtener el promedio de distancia')
+  }
+}
+
+// Buscar mi tarea más cercana
+const obtenerMiTareaMasCercana = async () => {
+  const usuario_id = localStorage.getItem('usuario_id')
+  try {
+    const response = await $apiClient.get(`${API_ROUTES.TAREA}/buscardistancia/${usuario_id}`)
+    // Si quieres mostrar solo esa tarea en la tabla:
+    tareas.value = response.data ? [response.data] : []
+    mostrarTabla.value = true
+  } catch (e) {
+    alert('No se pudo obtener la tarea más cercana')
+  }
+}
+
+// Promedio de distancia de tareas del usuario logeado
+const obtenerMiPromedioDeDistanciaDeTareas = async () => {
+  const usuario_id = localStorage.getItem('usuario_id')
+  try {
+    const response = await $apiClient.get(`${API_ROUTES.TAREA}/promedio-distancia-completadas/${usuario_id}`)  
+    // response.data es un número (Double)
+    alert('Promedio de distancia de tus tareas completadas: ' + response.data)
+  } catch (e) {
+    alert('No se pudo obtener el promedio de distancia de tus tareas')
+  }
+}
+
+// Mostrar tabla con el conteo de tareas del usuario por sector (con nombre de sector)
+const mostrarConteoTareasPorSector = async () => {
+  const usuario_id = localStorage.getItem('usuario_id')
+  try {
+    const response = await $apiClient.get(`${API_ROUTES.TAREA}/conteo-por-sector/${usuario_id}`)
+    // response.data debe ser un array de objetos: [{ sectorId, total }]
+    // Mapear para agregar el nombre del sector
+    conteoUsuarioSector.value = response.data.map(item => {
+      const sector = sectores.value.find(s => s.id === item.sectorId)
+      return {
+        usuarioId: usuario_id,
+        sectorId: item.sectorId,
+        nombreSector: sector ? sector.nombre : 'Sin sector',
+        total: item.totalTareas
+      }
+    })
+    mostrarTabla.value = true
+    tareas.value = []
+  } catch (e) {
+    alert('No se pudo obtener el conteo de tareas por sector')
   }
 }
 

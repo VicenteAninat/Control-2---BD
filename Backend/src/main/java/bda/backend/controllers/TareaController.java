@@ -2,6 +2,7 @@ package bda.backend.controllers;
 
 import bda.backend.dto.SectorTareasCompletadasDTO;
 import bda.backend.dto.TareaUsuarioSectorDTO;
+import bda.backend.dto.TareasDeUsuarioPorSectorDTO;
 import bda.backend.entities.TareaEntity;
 import bda.backend.services.TareaService;
 import lombok.RequiredArgsConstructor;
@@ -64,6 +65,26 @@ public class TareaController {
     @GetMapping("/promedio-distancia-completadas")
     public Double promedioDistanciaTareasCompletadas(@RequestParam double latitud, @RequestParam double longitud) {
         return tareaService.promedioDistanciaTareasCompletadas(latitud, longitud);
+    }
+
+    @GetMapping("/promedio-distancia-completadas/{id}")
+    public Double promedioDistanciaTareasCompletadasPorIdUsuario(@PathVariable Long id) {
+        return tareaService.promedioDistanciaTareasCompletadasPorIdUsuario(id);
+    }
+
+    @GetMapping("/{id}")
+    public List<TareaEntity> obtenerTareaPorIdUsuario(@PathVariable Long id) {
+        return tareaService.obtenerTareaPorIdUsuario(id);
+    }
+
+    @GetMapping("/buscardistancia/{id}")
+    public TareaEntity obtenerTareaMasCercanaPorIdUsuario(@PathVariable Long id) {
+        return tareaService.obtenerTareaMasCercanaPorIdUsuario(id);
+    }
+
+    @GetMapping("/conteo-por-sector/{id}")
+    public List<TareasDeUsuarioPorSectorDTO> mostrarConteoTareasPorSector(@PathVariable Long id) {
+        return tareaService.mostrarConteoTareasPorSector(id);
     }
 
 }

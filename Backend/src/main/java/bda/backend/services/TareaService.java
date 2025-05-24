@@ -2,6 +2,7 @@ package bda.backend.services;
 
 import bda.backend.dto.SectorTareasCompletadasDTO;
 import bda.backend.dto.TareaUsuarioSectorDTO;
+import bda.backend.dto.TareasDeUsuarioPorSectorDTO;
 import bda.backend.entities.TareaEntity;
 import bda.backend.repositories.SectorRepository;
 import bda.backend.repositories.TareaRepository;
@@ -118,5 +119,30 @@ public class TareaService {
         return tareaRepository.promedioDistanciaTareasCompletadas(latitud, longitud);
     }
 
+    public List<TareaEntity> obtenerTareaPorIdUsuario(Long id) {
+        return tareaRepository.obtenerTareaPorIdUsuario(id);
+    }
 
+    public TareaEntity obtenerTareaMasCercanaPorIdUsuario(Long id) {
+        // Extraer la ubicacion del usuario
+        var usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("El usuario no existe"));
+        var ubicacion = usuario.getLocation();
+        var ubicacionX = ubicacion.getX();
+        var ubicacionY = ubicacion.getY();
+        return tareaRepository.obtenerTareaMasCercana(ubicacionY, ubicacionX);
+    }
+
+    public Double promedioDistanciaTareasCompletadasPorIdUsuario(Long id) {
+        return tareaRepository.promedioDistanciaTareasCompletadasPorIdUsuario(id);
+    }
+
+    public List<TareasDeUsuarioPorSectorDTO> mostrarConteoTareasPorSector(Long id) {
+        return tareaRepository.mostrarConteoTareasPorSector(id).stream()
+                .map(obj -> new TareasDeUsuarioPorSectorDTO(
+                        ((Number) obj[0]).longValue(),
+                        ((Number) obj[1]).longValue()
+                ))
+                .toList();
+    }
 }

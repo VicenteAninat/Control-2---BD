@@ -15,7 +15,6 @@ export default defineNuxtPlugin((nuxtApp) => {
   // Interceptor para agregar el token JWT a cada solicitud
   $apiClient.interceptors.request.use((config) => {
     const access_token = localStorage.getItem('access_token')
-    console.log('access_token', access_token)
     const publicRoutes = ['/auth/login', '/auth/registrar', '/auth/refresh', '/auth/logout']
     if (access_token && !publicRoutes.includes(config.url || '')) {
       config.headers.Authorization = `Bearer ${access_token}`
