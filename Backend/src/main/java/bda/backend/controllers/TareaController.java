@@ -1,5 +1,6 @@
 package bda.backend.controllers;
 
+import bda.backend.dto.CoordenadasDTO;
 import bda.backend.dto.SectorTareasCompletadasDTO;
 import bda.backend.dto.TareaUsuarioSectorDTO;
 import bda.backend.dto.TareasDeUsuarioPorSectorDTO;
@@ -48,8 +49,8 @@ public class TareaController {
     }
 
     @PostMapping("/PendientesCercana")
-    public List<TareaEntity> obtenerTareasPendientesCercanas(@RequestParam double latitud, @RequestParam double longitud){
-        return tareaService.obtenerTareaPendienteMasCercana(latitud, longitud);
+    public List<TareaEntity> obtenerTareasPendientesCercanas(@RequestBody CoordenadasDTO coordenadas) {
+        return tareaService.obtenerTareaPendienteMasCercana(coordenadas.getLatitud(), coordenadas.getLongitud());
     }
 
     @GetMapping("/conteo-usuario-sector")
@@ -57,14 +58,21 @@ public class TareaController {
         return tareaService.contarTareasPorUsuarioYSectorDTO();
     }
 
-    @GetMapping("/sector-mas-tareas-radio")
-    public SectorTareasCompletadasDTO sectorConMasTareasCompletadasEnRadio5KM(@RequestParam double latitud, @RequestParam double longitud) {
-        return tareaService.sectorConMasTareasCompletadasEnRadio(latitud, longitud);
+    @PostMapping("/sector-mas-tareas-radio")
+    public SectorTareasCompletadasDTO sectorConMasTareasCompletadasEnRadio5KM(@RequestBody CoordenadasDTO coordenadas) {
+        return tareaService.sectorConMasTareasCompletadasEnRadio(coordenadas.getLatitud(), coordenadas.getLongitud());
     }
 
-    @GetMapping("/promedio-distancia-completadas")
-    public Double promedioDistanciaTareasCompletadas(@RequestParam double latitud, @RequestParam double longitud) {
-        return tareaService.promedioDistanciaTareasCompletadas(latitud, longitud);
+    @PostMapping("/promedio-distancia-completadas")
+    public Double promedioDistanciaTareasCompletadas(@RequestBody CoordenadasDTO coordenadas) {
+        return tareaService.promedioDistanciaTareasCompletadas(coordenadas.getLatitud(), coordenadas.getLongitud());
+    }
+
+    @GetMapping("/por-vencer")
+    public List<TareaEntity> tareasPorVencer(
+            @RequestParam Long usuario_id,
+            @RequestParam(defaultValue = "3") int dias) {
+        return tareaService.obtenerTareasPorVencer(usuario_id, dias);
     }
 
     @GetMapping("/promedio-distancia-completadas/{id}")

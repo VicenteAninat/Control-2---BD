@@ -107,16 +107,25 @@ public class TareaService {
 
     // 3. Sector con más tareas completadas en un radio
     public SectorTareasCompletadasDTO sectorConMasTareasCompletadasEnRadio(double latitud, double longitud) {
-        Object[] obj = tareaRepository.sectorConMasTareasCompletadasEnRadio(latitud, longitud);
+        Object obj = tareaRepository.sectorConMasTareasCompletadasEnRadio(latitud, longitud);
         if (obj == null) return null;
+        Object[] sectorData = (Object[]) obj;
         return new SectorTareasCompletadasDTO(
-                ((Number) obj[0]).longValue(),
-                ((Number) obj[1]).longValue()
+                ((Number) sectorData[0]).longValue(),
+                ((Number) sectorData[1]).longValue()
         );
     }
 
     public Double promedioDistanciaTareasCompletadas(double latitud, double longitud) {
         return tareaRepository.promedioDistanciaTareasCompletadas(latitud, longitud);
+    }
+
+    public List<TareaEntity> obtenerTareasPorVencer(Long usuario_id, int dias) {
+        Date ahora = new Date();
+        Date limite = new Date(ahora.getTime() + dias * 24L * 60 * 60 * 1000);
+        return tareaRepository.buscarTareasPendientesPorUsuarioYFechas(
+                usuario_id, ahora, limite
+        );
     }
 
     public List<TareaEntity> obtenerTareaPorIdUsuario(Long id) {
@@ -145,4 +154,5 @@ public class TareaService {
                 ))
                 .toList();
     }
+
 }

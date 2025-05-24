@@ -1,13 +1,8 @@
 <template>
   <div>
-    <header>
-      <h1 style="margin-bottom: 0;">Mi Aplicación</h1>
-      <nav style="display: flex; gap: 16px; justify-content: center; margin-bottom: 20px;">
-        <nuxt-link to="/" class="btn btn-link">Inicio</nuxt-link>
-        <nuxt-link to="/login" class="btn btn-link">Iniciar Sesión</nuxt-link>
-        <nuxt-link to="/register" class="btn btn-link">Registrar</nuxt-link>
-      </nav>
-    </header>
+    <nav v-if="showBackToPanel" class="volver-panel-nav">
+      <nuxt-link to="/panel" class="btn btn-secondary">← Volver al Panel</nuxt-link>
+    </nav>
     <main>
       <nuxt-page />
     </main>
@@ -18,14 +13,21 @@
 </template>
 
 <script setup>
-import { handleLogout } from './src/services/authService'
-import { useNuxtApp } from '#app'
-import { useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
+import { computed } from 'vue'
 
-const { $apiClient } = useNuxtApp()
-const router = useRouter()
+const route = useRoute()
+const mainMenuRoutes = ['/', '/login', '/register', '/panel']
 
-const logoutUser = async () => {
-  await handleLogout($apiClient, router)
-}
+const showBackToPanel = computed(() =>
+  !mainMenuRoutes.includes(route.path)
+)
 </script>
+
+<style scoped>
+.volver-panel-nav {
+  display: flex;
+  justify-content: center;
+  margin: 24px 0 32px 0;
+}
+</style>

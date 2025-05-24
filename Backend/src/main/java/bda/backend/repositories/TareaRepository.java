@@ -48,7 +48,7 @@ public interface TareaRepository extends JpaRepository<TareaEntity, Long> {
     ORDER BY total DESC
     LIMIT 1
 """, nativeQuery = true)
-    Object[] sectorConMasTareasCompletadasEnRadio(double latitud, double longitud);
+    Object sectorConMasTareasCompletadasEnRadio(double latitud, double longitud);
 
     @Query(value = """
     SELECT AVG(ST_Distance(
@@ -60,6 +60,18 @@ public interface TareaRepository extends JpaRepository<TareaEntity, Long> {
     WHERE t.completado = true
 """, nativeQuery = true)
     Double promedioDistanciaTareasCompletadas(double latitud, double longitud);
+
+    @Query(value = """
+    SELECT * FROM tarea
+    WHERE usuario_id = :usuario_id
+      AND completado = false
+      AND fecha_vencimiento BETWEEN :desde AND :hasta
+""", nativeQuery = true)
+    List<TareaEntity> buscarTareasPendientesPorUsuarioYFechas(
+            @org.springframework.data.repository.query.Param("usuario_id") Long usuario_id,
+            @org.springframework.data.repository.query.Param("desde") java.util.Date desde,
+            @org.springframework.data.repository.query.Param("hasta") java.util.Date hasta
+    );
 
     // Obtener tarea por id de usuario
     @Query(value = """

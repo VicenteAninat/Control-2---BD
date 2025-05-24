@@ -102,7 +102,7 @@
   }
 
   .container {
-    max-width: 600px;
+    max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
     background-color: var(--background-color);
@@ -156,4 +156,49 @@
   font-size: 0.85em;
   background: var(--background-color);
   padding: 0 0.2em;
+}
+
+/* Agrega esto a tu styles.css */
+.btn, .btn-primary, .btn-secondary, .btn-link {
+    display: inline-block;
+    background-color: var(--primary-color);
+    color: var(--text-color) !important;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0.6em 1.2em;
+    font-size: 1em;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none !important;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+.btn:hover, .btn-primary:hover, .btn-secondary:hover, .btn-link:hover {
+    background-color: var(--hover-color);
+    border-color: var(--accent-color);
+    color: var(--text-color) !important;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+}
+
+.btn-secondary {
+    background-color: var(--secondary-color);
+}
+
+.btn-link {
+    background: transparent;
+    color: var(--primary-color) !important;
+    border: none;
+    box-shadow: none;
+}
+
+.btn-link:hover {
+    background: var(--optional-color);
+    color: var(--hover-color) !important;
+}
+
+.title, .estadistica-title {
+    color: var(--text-optional-color);
 }

@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class SectorTareasCompletadasDTO {
-    private Long sectorId;
-    private Long total;
+public class CoordenadasDTO {
+    double latitud;
+    double longitud;
 }

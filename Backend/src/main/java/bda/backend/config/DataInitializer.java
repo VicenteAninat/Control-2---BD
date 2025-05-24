@@ -32,15 +32,16 @@ public class DataInitializer implements CommandLineRunner {
     private static final int Y_TAREAS = 40;
 
     private static final List<String> NOMBRES_SECTOR = List.of(
-            "Centro", "Zona Industrial", "Residencial Norte", "Residencial Sur", "Comercial", "Universitaria"
+            "Providencia", "Las Condes", "Santiago Centro", "Ñuñoa", "La Florida", "Maipú", "Vitacura"
     );
     private static final List<String> DESCS_SECTOR = List.of(
-            "Corazón de la ciudad, alta actividad comercial",
-            "Área de fábricas y talleres",
-            "Zona de viviendas y parques al norte",
-            "Zona de viviendas y colegios al sur",
-            "Calles con tiendas y restaurantes",
-            "Cerca de universidades y bibliotecas"
+            "Sector residencial y comercial, conocido por sus cafés y parques.",
+            "Zona de oficinas, centros comerciales y barrios residenciales.",
+            "Centro histórico y administrativo de Santiago.",
+            "Área residencial con vida cultural y deportiva.",
+            "Comuna extensa con zonas residenciales y comerciales.",
+            "Sector populoso con plazas y centros deportivos.",
+            "Zona exclusiva, parques y centros de eventos."
     );
     private static final List<String> TIPOS_TAREA = List.of(
             "Construcción", "Reparación", "Mantenimiento", "Pintura", "Limpieza", "Poda"
@@ -49,7 +50,7 @@ public class DataInitializer implements CommandLineRunner {
             "calles", "luces", "semáforos", "bancas", "juegos", "señales", "parques", "árboles"
     );
     private static final List<String> LUGARES = List.of(
-            "Av. Caracas", "Calle 100", "Carrera 7", "Parque Central", "Av. Siempre Viva", "Calle 45", "Plaza Mayor"
+            "Av. Apoquindo", "Parque Bustamante", "Plaza de Armas", "Av. Vicuña Mackenna", "Parque O'Higgins", "Calle Suecia", "Costanera Center"
     );
 
     @Override
@@ -57,8 +58,9 @@ public class DataInitializer implements CommandLineRunner {
         GeometryFactory gf = new GeometryFactory();
         Random random = new Random();
 
-        double baseLat = 4.65;
-        double baseLon = -74.08;
+        // Centro aproximado de Santiago
+        double baseLat = -33.45;
+        double baseLon = -70.65;
 
         // Usuarios
         if (usuarioRepository.count() == 0) {
@@ -87,32 +89,57 @@ public class DataInitializer implements CommandLineRunner {
                 sectorRepository.save(s);
             }
         }
+        // 1. Crear usuario "duvan" si no existe
+        UsuarioEntity duvan = usuarioRepository.findByUsername("duvan");
+        if (duvan == null) {
+            duvan = UsuarioEntity.builder()
+                    .username("duvan")
+                    .password(passwordEncoder.encode("1234"))
+                    .location(point(gf, baseLon, baseLat))
+                    .build();
+            usuarioRepository.save(duvan);
+        }
 
-        // Tareas
-        if (tareaRepository.count() == 0) {
-            List<UsuarioEntity> usuarios = usuarioRepository.findAll();
-            List<SectorEntity> sectores = sectorRepository.findAll();
+        // 2. Asignar tareas pendientes próximas a vencer a "duvan"
+        List<SectorEntity> sectores = sectorRepository.findAll();
+        if (tareaRepository.buscarTareasPendientesPorUsuarioYFechas(
+                duvan.getId(), Date.valueOf(LocalDate.now()), Date.valueOf(LocalDate.now().plusDays(3))).isEmpty()) {
 
-            for (int i = 1; i <= Y_TAREAS; i++) {
-                UsuarioEntity usuario = usuarios.get(random.nextInt(usuarios.size()));
+            for (int i = 1; i <= 2; i++) {
                 SectorEntity sector = sectores.get(random.nextInt(sectores.size()));
-
-                // Generar título y descripción realistas
                 String tipo = TIPOS_TAREA.get(random.nextInt(TIPOS_TAREA.size()));
                 String objeto = OBJETOS_TAREA.get(random.nextInt(OBJETOS_TAREA.size()));
                 String lugar = LUGARES.get(random.nextInt(LUGARES.size()));
                 String titulo = tipo + " " + objeto;
                 String descripcion = tipo.toLowerCase() + " de " + objeto + " en " + lugar + " (" + sector.getNombre() + ")";
+                LocalDate fecha = LocalDate.now().plusDays(i); // 1 y 2 días
+                TareaEntity tarea = new TareaEntity(
+                        null,
+                        titulo,
+                        descripcion,
+                        Date.valueOf(fecha),
+                        false,
+                        duvan.getId(),
+                        sector.getId()
+                );
+                tareaRepository.save(tarea);
+            }
+        }
 
-                // Ubicación del sector a 2-5km del usuario (opcional: puedes omitir si no quieres mover el sector)
-                double distanciaKm = 2 + random.nextDouble() * 3;
-                double angulo = random.nextDouble() * 2 * Math.PI;
-                double latOffset = (distanciaKm / 111.32) * Math.cos(angulo);
-                double lonOffset = (distanciaKm / (111.32 * Math.cos(Math.toRadians(usuario.getLocation().getY())))) * Math.sin(angulo);
+        // Tareas
+        if (tareaRepository.count() <= 42) {
+            List<UsuarioEntity> usuarios = usuarioRepository.findAll();
+            sectores = sectorRepository.findAll();
 
-                // Si quieres que el sector se mueva, descomenta:
-                // sector.setUbicacion(point(gf, usuario.getLocation().getX() + lonOffset, usuario.getLocation().getY() + latOffset));
-                // sectorRepository.save(sector);
+            for (int i = 1; i <= Y_TAREAS; i++) {
+                UsuarioEntity usuario = usuarios.get(random.nextInt(usuarios.size()));
+                SectorEntity sector = sectores.get(random.nextInt(sectores.size()));
+
+                String tipo = TIPOS_TAREA.get(random.nextInt(TIPOS_TAREA.size()));
+                String objeto = OBJETOS_TAREA.get(random.nextInt(OBJETOS_TAREA.size()));
+                String lugar = LUGARES.get(random.nextInt(LUGARES.size()));
+                String titulo = tipo + " " + objeto;
+                String descripcion = tipo.toLowerCase() + " de " + objeto + " en " + lugar + " (" + sector.getNombre() + ")";
 
                 boolean completado = random.nextBoolean();
                 LocalDate fecha = LocalDate.now().plusDays(random.nextInt(30));
