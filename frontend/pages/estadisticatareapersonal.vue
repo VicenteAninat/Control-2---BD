@@ -173,7 +173,6 @@ const mostrar = async (tipo) => {
                 latitud: Number(latitud),
                 longitud: Number(longitud)
             })
-            console.log(response.data)
             sectorMasPersonal.value = response.data
         } catch (e) {
             sectorMasPersonal.value = null

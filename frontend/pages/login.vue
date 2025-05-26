@@ -50,6 +50,8 @@ const handleLogin = async () => {
       }
       localStorage.setItem('access_token', access_token)
       localStorage.setItem('usuario_id', usuario_id)
+      localStorage.setItem('latitude', position.coords.latitude)
+      localStorage.setItem('longitude', position.coords.longitude)
       try {
         const tareasPorVencer = await $apiClient.get(API_ROUTES.TAREA + '/por-vencer', {
           params: { dias: 3, usuario_id }
