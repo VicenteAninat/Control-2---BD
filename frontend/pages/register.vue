@@ -71,7 +71,7 @@ const handleRegister = async () => {
       longitude: longitude.value
     })
     alert('Registro exitoso')
-    router.push('/panel')
+    router.push('/login')
   } catch (error) {
     console.error('Error:', error)
     alert(error.response?.data?.message || 'Error al registrarse')

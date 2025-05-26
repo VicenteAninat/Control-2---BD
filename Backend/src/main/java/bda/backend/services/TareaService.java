@@ -116,6 +116,16 @@ public class TareaService {
         );
     }
 
+    public SectorTareasCompletadasDTO sectorConMasTareasCompletadasEnRadioPorUsuario(Long id, double latitud, double longitud) {
+        Object obj = tareaRepository.sectorConMasTareasCompletadasEnRadioPorUsuario(id, latitud, longitud);
+        if (obj == null) return null;
+        Object[] sectorData = (Object[]) obj;
+        return new SectorTareasCompletadasDTO(
+                ((Number) sectorData[0]).longValue(),
+                ((Number) sectorData[1]).longValue()
+        );
+    }
+
     public Double promedioDistanciaTareasCompletadas(double latitud, double longitud) {
         return tareaRepository.promedioDistanciaTareasCompletadas(latitud, longitud);
     }
@@ -139,7 +149,7 @@ public class TareaService {
         var ubicacion = usuario.getLocation();
         var ubicacionX = ubicacion.getX();
         var ubicacionY = ubicacion.getY();
-        return tareaRepository.obtenerTareaMasCercana(ubicacionY, ubicacionX);
+        return tareaRepository.obtenerTareaMasCercana(id, ubicacionY, ubicacionX);
     }
 
     public Double promedioDistanciaTareasCompletadasPorIdUsuario(Long id) {
@@ -154,5 +164,4 @@ public class TareaService {
                 ))
                 .toList();
     }
-
 }

@@ -16,7 +16,7 @@ import java.sql.Date;
 public class TareaEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+        private Long id;
 
     private String nombre;
     private String descripcion;

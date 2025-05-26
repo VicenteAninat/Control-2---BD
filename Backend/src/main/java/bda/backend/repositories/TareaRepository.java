@@ -50,6 +50,24 @@ public interface TareaRepository extends JpaRepository<TareaEntity, Long> {
 """, nativeQuery = true)
     Object sectorConMasTareasCompletadasEnRadio(double latitud, double longitud);
 
+// Buscar el sector con más tareas completadas en un radio de 2 km del usuario con id de usuario
+    @Query(value = """
+    SELECT s.id, COUNT(t.id) as total
+    FROM sector s
+    JOIN tarea t ON t.sector_id = s.id
+    WHERE t.completado = true
+      AND t.usuario_id = :usuarioId
+      AND ST_DWithin(
+        s.ubicacion,
+        ST_SetSRID(ST_MakePoint(:longitud, :latitud), 4326),
+        2000
+      )
+    GROUP BY s.id
+    ORDER BY total DESC
+    LIMIT 1
+""", nativeQuery = true)
+    Object sectorConMasTareasCompletadasEnRadioPorUsuario(Long usuarioId, double latitud, double longitud);
+
     @Query(value = """
     SELECT AVG(ST_Distance(
         s.ubicacion,
@@ -81,21 +99,25 @@ public interface TareaRepository extends JpaRepository<TareaEntity, Long> {
 """, nativeQuery = true)
     List<TareaEntity> obtenerTareaPorIdUsuario(Long usuarioId);
 
-    // Obtener tarea más cercana a partir de dos coordenadas usando PostGIS y sin id de usuario
+    // Obtener tarea más cercana a partir de dos coordenadas usando PostGIS y con id de usuario
     @Query(value = """
-    WITH distancias AS (
-        SELECT t.*, ST_Distance(s.ubicacion, ST_SetSRID(ST_MakePoint(:longitud, :latitud), 4326)) as distancia
-        FROM tarea t
-        JOIN sector s ON t.sector_id = s.id
-        WHERE t.completado = false
-    ),
-    min_dist AS (
-        SELECT MIN(distancia) as min_distancia FROM distancias
+SELECT t.*
+FROM tarea t
+JOIN sector s ON t.sector_id = s.id
+WHERE t.usuario_id = :id
+    AND t.completado = false
+    AND ST_DWithin(
+        s.ubicacion,
+        ST_SetSRID(ST_MakePoint(:longitud, :latitud), 4326),
+        5000
     )
-    SELECT * FROM distancias WHERE distancia = (SELECT min_distancia FROM min_dist)
-    LIMIT 1
+ORDER BY ST_Distance(
+        s.ubicacion,
+        ST_SetSRID(ST_MakePoint(:longitud, :latitud), 4326)
+    )
+LIMIT 1
 """, nativeQuery = true)
-    TareaEntity obtenerTareaMasCercana(double latitud, double longitud);
+    TareaEntity obtenerTareaMasCercana(Long id, double latitud, double longitud);
 
     // Obtener el promedio de distancia de las tareas completadas por id de usuario
     @Query(value = """

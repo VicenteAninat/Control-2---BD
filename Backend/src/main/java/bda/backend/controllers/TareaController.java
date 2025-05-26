@@ -63,6 +63,11 @@ public class TareaController {
         return tareaService.sectorConMasTareasCompletadasEnRadio(coordenadas.getLatitud(), coordenadas.getLongitud());
     }
 
+    @PostMapping("/sector-mas-tareas-radio-usuario/{id}")
+    public SectorTareasCompletadasDTO sectorConMasTareasCompletadasEnRadio5KMPorUsuario(@PathVariable Long id, @RequestBody CoordenadasDTO coordenadas) {
+        return tareaService.sectorConMasTareasCompletadasEnRadioPorUsuario(id, coordenadas.getLatitud(), coordenadas.getLongitud());
+    }
+
     @PostMapping("/promedio-distancia-completadas")
     public Double promedioDistanciaTareasCompletadas(@RequestBody CoordenadasDTO coordenadas) {
         return tareaService.promedioDistanciaTareasCompletadas(coordenadas.getLatitud(), coordenadas.getLongitud());

@@ -25,7 +25,7 @@
                         </thead>
                         <tbody>
                             <tr v-for="item in conteoPorSector" :key="item.sectorId">
-                                <td>{{ item.nombreSector }}</td>
+                                <td>{{ item.sectorId }}</td>
                                 <td>{{ item.total }}</td>
                             </tr>
                         </tbody>
@@ -86,7 +86,7 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td>{{ sectorMasPersonal.nombreSector }}</td>
+                            <td>{{ sectorMasPersonal.sectorId }}</td>
                             <td>{{ sectorMasPersonal.total }}</td>
                         </tr>
                     </tbody>
@@ -166,18 +166,15 @@ const mostrar = async (tipo) => {
     }
 
     if (tipo === 'sectorMasPersonal') {
-        await cargarSectores()
+        const latitud = localStorage.getItem('latitude')
+        const longitud = localStorage.getItem('longitude')
         try {
-            const response = await $apiClient.get(`${API_ROUTES.TAREA}/sector-mas-tareas-completadas/${usuario_id}`)
-            if (response.data && response.data.sectorId) {
-                const sector = sectores.value.find(s => s.id === response.data.sectorId)
-                sectorMasPersonal.value = {
-                    nombreSector: sector ? sector.nombre : 'Sin sector',
-                    total: response.data.total
-                }
-            } else {
-                sectorMasPersonal.value = response.data
-            }
+            const response = await $apiClient.post(`${API_ROUTES.TAREA}/sector-mas-tareas-radio-usuario/${usuario_id}`, {
+                latitud: Number(latitud),
+                longitud: Number(longitud)
+            })
+            console.log(response.data)
+            sectorMasPersonal.value = response.data
         } catch (e) {
             sectorMasPersonal.value = null
         }
