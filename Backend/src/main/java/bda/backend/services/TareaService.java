@@ -116,7 +116,13 @@ public class TareaService {
         );
     }
 
-    public SectorTareasCompletadasDTO sectorConMasTareasCompletadasEnRadioPorUsuario(Long id, double latitud, double longitud) {
+    public SectorTareasCompletadasDTO sectorConMasTareasCompletadasEnRadioPorUsuario(Long id) {
+        // Extraer la ubicacion del usuario
+        var usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("El usuario no existe"));
+        var ubicacion = usuario.getLocation();
+        var latitud = ubicacion.getY();
+        var longitud = ubicacion.getX();
         Object obj = tareaRepository.sectorConMasTareasCompletadasEnRadioPorUsuario(id, latitud, longitud);
         if (obj == null) return null;
         Object[] sectorData = (Object[]) obj;

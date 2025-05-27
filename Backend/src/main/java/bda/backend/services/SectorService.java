@@ -2,6 +2,7 @@ package bda.backend.services;
 
 import bda.backend.config.SectorRequest;
 import bda.backend.dto.SectorDTO;
+import bda.backend.dto.SectorGrillaDTO;
 import bda.backend.entities.SectorEntity;
 import bda.backend.repositories.SectorRepository;
 import lombok.RequiredArgsConstructor;
@@ -54,5 +55,17 @@ public class SectorService {
             dto.setLongitude(sector.getUbicacion().getX());
             return dto;
         }).toList();
+    }
+
+    public List<SectorGrillaDTO> obtenerSectoresConMasTareas() {
+        return sectorRepository.obtenerSectoresConMasTareas().stream()
+                .map(obj -> new SectorGrillaDTO(
+                        ((Number) obj[0]).longValue(),
+                        (String) obj[1],
+                        ((Number) obj[2]).doubleValue(),
+                        ((Number) obj[3]).doubleValue(),
+                        ((Number) obj[4]).intValue()
+                ))
+                .toList();
     }
 }

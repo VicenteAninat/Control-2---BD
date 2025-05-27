@@ -5,6 +5,7 @@
     <div style="display: flex; gap: 12px; margin-bottom: 20px;">
       <button @click="mostrarCrear = true">Crear Sector</button>
       <button @click="mostrarTablaSectores">Ver Todos</button>
+      <button @click="mostrarSectoresConMasTareas">Sectores con más tareas pendientes</button>
     </div>
 
     <!-- Formulario para crear o editar sector -->
@@ -52,6 +53,23 @@
         </tr>
       </tbody>
     </table>
+
+    <table v-if="mostrarTablaSectoresConMasTareas" class="table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Tareas Completadas</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="sector in sectores" :key="sector.id">
+          <td>{{ sector.id }}</td>
+          <td>{{ sector.nombre }}</td>
+          <td>{{ sector.tareasCompletadas || 0 }}</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </template>
 
@@ -67,6 +85,7 @@ const sectores = ref([])
 const mostrarCrear = ref(false)
 const sectorEditar = ref(null)
 const mostrarTabla = ref(false)
+const mostrarTablaSectoresConMasTareas = ref(false)
 const form = ref({
   nombre: '',
   descripcion: '',
@@ -81,7 +100,6 @@ const fetchSectores = async () => {
   try {
     const response = await $apiClient.get(API_ROUTES.SECTOR + '/')
     sectores.value = response.data
-    console.log('Sectores:', sectores.value)
   } catch (e) {
     alert('No se pudieron cargar los sectores')
   }
@@ -97,7 +115,6 @@ const crearSector = async () => {
     alert('Selecciona la ubicación en el mapa')
     return
   }
-  console.log('Creando sector', form.value)
   try {
     await $apiClient.post(API_ROUTES.SECTOR + '/guardar', {
       nombre: form.value.nombre,
@@ -218,4 +235,15 @@ watch([mostrarCrear, sectorEditar], ([nuevoCrear, nuevoEditar]) => {
 
 onMounted(() => {
 })
+
+// Mostrar sectores con más tareas
+const mostrarSectoresConMasTareas = async () => {
+  try {
+    const response = await $apiClient.get(API_ROUTES.SECTOR + '/sectores-con-mas-tareas')
+    sectores.value = response.data
+    mostrarTablaSectoresConMasTareas.value = true
+  } catch (e) {
+    alert('Error al cargar sectores con más tareas')
+  }
+}
 </script>

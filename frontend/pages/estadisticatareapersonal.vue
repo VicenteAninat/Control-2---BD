@@ -169,10 +169,7 @@ const mostrar = async (tipo) => {
         const latitud = localStorage.getItem('latitude')
         const longitud = localStorage.getItem('longitude')
         try {
-            const response = await $apiClient.post(`${API_ROUTES.TAREA}/sector-mas-tareas-radio-usuario/${usuario_id}`, {
-                latitud: Number(latitud),
-                longitud: Number(longitud)
-            })
+            const response = await $apiClient.post(`${API_ROUTES.TAREA}/sector-mas-tareas-radio-usuario/${usuario_id}`)
             sectorMasPersonal.value = response.data
         } catch (e) {
             sectorMasPersonal.value = null
