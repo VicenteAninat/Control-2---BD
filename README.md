@@ -4,6 +4,7 @@
 
 - Clona este repositorio y entra a la carpeta raíz del proyecto.
 - Asegúrate de tener **Docker** y **Docker Compose** instalados en tu máquina.
+- Se necesita que en el backend se ejecute en el apartado maven, las opciones de clean y package (para la creación de target)
 
 ---
 
@@ -131,6 +132,7 @@ registrado del usuario?
   ```
 - Si cambias variables de entorno, recuerda reconstruir los contenedores afectados.
 - Si en algún momento una de las peticiones dice que no se pueden encontrar datos no necesariamente es que fallo, si no que se debe refrescar otra vez, ósea apretar otro botón y volver al anterior para que funcione debido a temas de latencia y tiempos de espera, ya que como se montan en docker compose, puede afectar la velocidad de conexión de internet y los llamados debido a las diversas replicas que se manejan.
+- Si falla al levantar en docker compose, basta con volver a intentar levantarlo.
 
 ---
 
