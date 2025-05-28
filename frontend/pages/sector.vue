@@ -53,7 +53,6 @@
         </tr>
       </tbody>
     </table>
-
     <table v-if="mostrarTablaSectoresConMasTareas" class="table">
       <thead>
         <tr>
@@ -77,8 +76,6 @@
 import { ref, onMounted, watch } from 'vue'
 import { useNuxtApp } from '#app'
 import API_ROUTES from '../src/api-routes.js'
-import L from 'leaflet'
-import 'leaflet/dist/leaflet.css'
 
 const { $apiClient } = useNuxtApp()
 const sectores = ref([])
@@ -108,6 +105,23 @@ const fetchSectores = async () => {
 const mostrarTablaSectores = async () => {
   await fetchSectores()
   mostrarTabla.value = true
+  mostrarTablaSectoresConMasTareas.value = false
+  mostrarCrear.value = false
+  sectorEditar.value = null
+}
+
+// Mostrar sectores con más tareas
+const mostrarSectoresConMasTareas = async () => {
+  try {
+    const response = await $apiClient.get(API_ROUTES.SECTOR + '/sectores-con-mas-tareas')
+    sectores.value = response.data
+    mostrarTablaSectoresConMasTareas.value = true
+    mostrarTabla.value = false
+    mostrarCrear.value = false
+    sectorEditar.value = null
+  } catch (e) {
+    alert('Error al cargar sectores con más tareas')
+  }
 }
 
 const crearSector = async () => {
@@ -188,6 +202,7 @@ const cancelarEdicion = () => {
 }
 
 const initMap = () => {
+  if (!L) return
   // Destruir mapa anterior si existe
   if (map) {
     map.off()
@@ -233,7 +248,13 @@ watch([mostrarCrear, sectorEditar], ([nuevoCrear, nuevoEditar]) => {
   }
 })
 
-onMounted(() => {
+onMounted(async () => {
+  const leafletModule = await import('leaflet')
+  await import('leaflet/dist/leaflet.css')
+  L = leafletModule.default
+  if (mostrarCrear.value || sectorEditar.value) {
+    initMap()
+  }
 })
 
 // Mostrar sectores con más tareas

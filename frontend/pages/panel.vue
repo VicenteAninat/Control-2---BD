@@ -4,6 +4,7 @@
     <div style="margin-top: 30px; display: flex; flex-direction: column; gap: 16px; align-items: center;">
       <nuxt-link to="/tarea" class="btn btn-primary" style="width: 200px;">Tareas</nuxt-link>
       <nuxt-link to="/sector" class="btn btn-secondary" style="width: 200px;">Sectores</nuxt-link>
+      <nuxt-link to="/" class="btn btn-secondary" style="width: 200px;">Volver al Inicio</nuxt-link>
     </div>
   </div>
 </template>
