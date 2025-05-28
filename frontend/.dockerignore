@@ -1,0 +1,14 @@
+node_modules
+.git
+.dockerignore
+Dockerfile
+README.md
+.nuxt
+.output
+.cache
+dist
+logs
+*.log
+.idea
+.fleet
+.DS_Store

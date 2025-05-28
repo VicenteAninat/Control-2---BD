@@ -59,8 +59,6 @@
 import { ref, onMounted, watch } from 'vue'
 import { useNuxtApp } from '#app'
 import API_ROUTES from '../src/api-routes.js'
-import L from 'leaflet'
-import 'leaflet/dist/leaflet.css'
 
 const { $apiClient } = useNuxtApp()
 const sectores = ref([])
@@ -81,7 +79,6 @@ const fetchSectores = async () => {
   try {
     const response = await $apiClient.get(API_ROUTES.SECTOR + '/')
     sectores.value = response.data
-    console.log('Sectores:', sectores.value)
   } catch (e) {
     alert('No se pudieron cargar los sectores')
   }
@@ -97,7 +94,6 @@ const crearSector = async () => {
     alert('Selecciona la ubicación en el mapa')
     return
   }
-  console.log('Creando sector', form.value)
   try {
     await $apiClient.post(API_ROUTES.SECTOR + '/guardar', {
       nombre: form.value.nombre,
@@ -171,6 +167,7 @@ const cancelarEdicion = () => {
 }
 
 const initMap = () => {
+  if(!L) return
   // Destruir mapa anterior si existe
   if (map) {
     map.off()
@@ -216,6 +213,12 @@ watch([mostrarCrear, sectorEditar], ([nuevoCrear, nuevoEditar]) => {
   }
 })
 
-onMounted(() => {
+onMounted(async () => {
+  const leafletModule = await import('leaflet')
+  await import('leaflet/dist/leaflet.css')
+  L = leafletModule.default
+  if (mostrarCrear.value || sectorEditar.value) {
+    initMap()
+  }
 })
 </script>

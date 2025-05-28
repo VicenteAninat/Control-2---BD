@@ -1,9 +1,3 @@
--- Crear la base de datos
-CREATE DATABASE tbdc2;
-
--- Conectarse a la base de datos
-\c tbdc2
-
 -- Habilitar extensión PostGIS
 CREATE EXTENSION IF NOT EXISTS postgis;
 
