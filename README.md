@@ -17,15 +17,15 @@ Debes crear o editar el archivo `.env` en la carpeta `Multiple_replicas` (donde 
 POSTGRES_DB=tbdc2
 POSTGRES_USER=usuario_db
 POSTGRES_PASSWORD=tu_contraseña_segura
-JWT_SECRET_KEY=tu_clave_secreta
+JWT_SECRET_KEY=0txPZzvTRMpWSjKQLghGBiXbme2lDVJq97C1O5Na
 ```
+Observación: Se indico la Secret_Key por propósitos meramente de evaluación.
 
-> **Nota:** Cambia los valores por los que desees usar.  
+> **Nota:** Cambia los valores por los que desees usar, correspondientes a su configuración.
 > Ejemplo base:
 > ```
 > POSTGRES_USER=postgres
 > POSTGRES_PASSWORD=1234
-> JWT_SECRET_KEY=arreglo alfanumerico de 40 caracteres
 > ```
 
 ### 📁 Archivo `.env` en la carpeta `frontend/`
@@ -79,6 +79,44 @@ Esto levantará todos los servicios: base de datos, backend, frontend y balancea
 
 - Se considera que un **sector** es una **categoría**.
 - Cada **sector** tiene asignado un **punto geoespacial** (latitud y longitud).
+- Se considera la implementación de un sector según las especificaciones del ayudante pertinente, un sector como un punto en el espacio
+- Respecto a cada pregunta:
+
+○ ¿Cuál es la tarea más cercana al usuario (que esté pendiente)?
+    
+	- Asumimos que es la tarea es del usuario
+	- Asumimos que es respecto a la ubicación registrada del usuario
+
+○ ¿Cuál es el sector con más tareas completadas en un radio de 2 kilómetros
+del usuario?
+    
+	- Asumimos que son las tareas completadas del usuario
+
+○ ¿Cuál es el promedio de distancia de las tareas completadas respecto a la
+ubicación del usuario?
+    
+	- Asumimos que es respecto a las tareas completadas por el usuario
+
+○ ¿En qué sectores geográficos se concentran la mayoría de las tareas
+pendientes? (utilizando agrupación espacial).
+        
+	- La implementación considera la agrupación espacial entre sectores.
+
+○ ¿Cuál es la tarea pendiente más cercana a la ubicación del usuario?
+    
+	- Asumimos que es cualquier tarea
+	- Asumimos que es respecto a la ubicación del login
+
+○ ¿Cuál es el sector con más tareas completadas dentro de un radio de 5 km
+desde la ubicación del usuario?
+    
+	- Asumimos que es la ubicación del usuario al momento de hacer login
+
+○ ¿Cuál es el promedio de distancia entre las tareas completadas y el punto
+registrado del usuario?
+    
+	- Asumimos que es la ubicación del usuario al momento de hacer login
+
 
 ---
 
@@ -102,5 +140,3 @@ Esto levantará todos los servicios: base de datos, backend, frontend y balancea
 - [Docker Compose Docs](https://docs.docker.com/compose/)
 
 ---
-
-¡Listo! Si tienes dudas, revisa los comentarios en el código o contacta al equipo de desarrollo.

@@ -5,6 +5,7 @@
     <div style="display: flex; gap: 12px; margin-bottom: 20px;">
       <button @click="mostrarCrear = true">Crear Sector</button>
       <button @click="mostrarTablaSectores">Ver Todos</button>
+      <button @click="mostrarSectoresConMasTareas">Sectores con más tareas pendientes</button>
     </div>
 
     <!-- Formulario para crear o editar sector -->
@@ -52,6 +53,22 @@
         </tr>
       </tbody>
     </table>
+    <table v-if="mostrarTablaSectoresConMasTareas" class="table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Tareas Completadas</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="sector in sectores" :key="sector.id">
+          <td>{{ sector.id }}</td>
+          <td>{{ sector.nombre }}</td>
+          <td>{{ sector.tareasCompletadas || 0 }}</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </template>
 
@@ -65,6 +82,7 @@ const sectores = ref([])
 const mostrarCrear = ref(false)
 const sectorEditar = ref(null)
 const mostrarTabla = ref(false)
+const mostrarTablaSectoresConMasTareas = ref(false)
 const form = ref({
   nombre: '',
   descripcion: '',
@@ -87,6 +105,23 @@ const fetchSectores = async () => {
 const mostrarTablaSectores = async () => {
   await fetchSectores()
   mostrarTabla.value = true
+  mostrarTablaSectoresConMasTareas.value = false
+  mostrarCrear.value = false
+  sectorEditar.value = null
+}
+
+// Mostrar sectores con más tareas
+const mostrarSectoresConMasTareas = async () => {
+  try {
+    const response = await $apiClient.get(API_ROUTES.SECTOR + '/sectores-con-mas-tareas')
+    sectores.value = response.data
+    mostrarTablaSectoresConMasTareas.value = true
+    mostrarTabla.value = false
+    mostrarCrear.value = false
+    sectorEditar.value = null
+  } catch (e) {
+    alert('Error al cargar sectores con más tareas')
+  }
 }
 
 const crearSector = async () => {
@@ -167,7 +202,7 @@ const cancelarEdicion = () => {
 }
 
 const initMap = () => {
-  if(!L) return
+  if (!L) return
   // Destruir mapa anterior si existe
   if (map) {
     map.off()

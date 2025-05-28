@@ -64,8 +64,8 @@ public class TareaController {
     }
 
     @PostMapping("/sector-mas-tareas-radio-usuario/{id}")
-    public SectorTareasCompletadasDTO sectorConMasTareasCompletadasEnRadio5KMPorUsuario(@PathVariable Long id, @RequestBody CoordenadasDTO coordenadas) {
-        return tareaService.sectorConMasTareasCompletadasEnRadioPorUsuario(id, coordenadas.getLatitud(), coordenadas.getLongitud());
+    public SectorTareasCompletadasDTO sectorConMasTareasCompletadasEnRadio5KMPorUsuario(@PathVariable Long id) {
+        return tareaService.sectorConMasTareasCompletadasEnRadioPorUsuario(id);
     }
 
     @PostMapping("/promedio-distancia-completadas")
