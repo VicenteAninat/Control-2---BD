@@ -256,4 +256,15 @@ onMounted(async () => {
     initMap()
   }
 })
+
+// Mostrar sectores con más tareas
+const mostrarSectoresConMasTareas = async () => {
+  try {
+    const response = await $apiClient.get(API_ROUTES.SECTOR + '/sectores-con-mas-tareas')
+    sectores.value = response.data
+    mostrarTablaSectoresConMasTareas.value = true
+  } catch (e) {
+    alert('Error al cargar sectores con más tareas')
+  }
+}
 </script>

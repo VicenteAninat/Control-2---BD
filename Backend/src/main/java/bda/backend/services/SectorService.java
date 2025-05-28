@@ -2,6 +2,7 @@ package bda.backend.services;
 
 import bda.backend.config.SectorRequest;
 import bda.backend.dto.SectorDTO;
+import bda.backend.dto.SectorGrillaDTO;
 import bda.backend.entities.SectorEntity;
 import bda.backend.dto.SectorGrillaDTO;
 import bda.backend.repositories.SectorRepository;
