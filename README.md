@@ -72,7 +72,7 @@ Esto levantará todos los servicios: base de datos, backend, frontend y balancea
 - **Base de datos:** PostgreSQL con extensión PostGIS.
 - **Balanceo de carga:** Nginx balancea tanto el frontend como el backend.
 - **Contenedores:** Orquestados con Docker Compose.
-- **Replicas: ** Se definieron 3 replicas para el frontend y para Backend, además de la imagen correspondiente de la Base de datos.
+- **Replicas:** Se definieron 3 replicas para el frontend y para Backend, además de la imagen correspondiente de la Base de datos.
 
 ---
 
