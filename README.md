@@ -136,7 +136,11 @@ registrado del usuario?
   ```
 - Si cambias variables de entorno, recuerda reconstruir los contenedores afectados.
 - Si en algún momento una de las peticiones dice que no se pueden encontrar datos no necesariamente es que fallo, si no que se debe refrescar otra vez, ósea apretar otro botón y volver al anterior para que funcione debido a temas de latencia y tiempos de espera, ya que como se montan en docker compose, puede afectar la velocidad de conexión de internet y los llamados debido a las diversas replicas que se manejan.
-- Si falla al levantar en docker compose oh hay errores de CORS, basta con ir a docker desktop, volver a ejecutar los backend (solo apretando que se inicien otra vez), con eso debería fucionar correctamente.
+- Si se presentan anomalías en el uso de la página (Ej: Problemas de CORS), es posible que se deba a una condición de carrera en las imagenes de docker, para solucionar el problema seguir los siguientes pasos:
+	- Abrir Docker desktop
+  - Ir a la pestaña containers
+  - Seleccionar el container llamado "multiple-replicas"
+  - Hacer clic en el botón de play de las imágenes "backend1", "backend2" y "backend3"
 - Se definio un usuario común para probar rapidamente las estadisticas, el cual es:
 ```sh
 Username: duvan
