@@ -4,7 +4,7 @@
 
 - Clona este repositorio y entra a la carpeta raíz del proyecto.
 - Asegúrate de tener **Docker** y **Docker Compose** instalados en tu máquina.
-- Se necesita que en el backend se ejecute en el apartado maven, las opciones de clean y package (para la creación de target)
+- Se necesita que en el backend se ejecute en el apartado maven, las opciones de clean y package (para la creación de target), teniendo en cuenta el que se debe omitir los test con " Toggle 'Skip Tests' Mode "
 
 ---
 
@@ -42,7 +42,7 @@ BACKEND_PORT=8090
 
 ## 3️⃣ Despliegue con Docker Compose
 
-Desde la carpeta donde está tu `docker-compose.yml`, ejecuta:
+Desde la carpeta donde está tu `compose.yml`, ejecuta:
 
 ```sh
 docker compose build
@@ -50,6 +50,8 @@ docker compose up -d
 ```
 
 Esto levantará todos los servicios: base de datos, backend, frontend y balanceadores Nginx.
+
+Aclaración: En esa carpeta se debe abrir una terminal y usar esos comandos.
 
 ---
 
@@ -132,7 +134,10 @@ registrado del usuario?
   ```
 - Si cambias variables de entorno, recuerda reconstruir los contenedores afectados.
 - Si en algún momento una de las peticiones dice que no se pueden encontrar datos no necesariamente es que fallo, si no que se debe refrescar otra vez, ósea apretar otro botón y volver al anterior para que funcione debido a temas de latencia y tiempos de espera, ya que como se montan en docker compose, puede afectar la velocidad de conexión de internet y los llamados debido a las diversas replicas que se manejan.
-- Si falla al levantar en docker compose, basta con volver a intentar levantarlo.
+- Si falla al levantar en docker compose oh hay errores de CORS, basta con ir a docker desktop, volver a ejecutar los backend (solo apretando que se inicien otra vez), con eso debería fucionar correctamente.
+- Se definio uun usuario comun para probar rapidamente las estadisticas, el cual es:
+  	○ username: duvan
+	○ password: 1234
 
 ---
 
