@@ -135,10 +135,11 @@ registrado del usuario?
 - Si cambias variables de entorno, recuerda reconstruir los contenedores afectados.
 - Si en algún momento una de las peticiones dice que no se pueden encontrar datos no necesariamente es que fallo, si no que se debe refrescar otra vez, ósea apretar otro botón y volver al anterior para que funcione debido a temas de latencia y tiempos de espera, ya que como se montan en docker compose, puede afectar la velocidad de conexión de internet y los llamados debido a las diversas replicas que se manejan.
 - Si falla al levantar en docker compose oh hay errores de CORS, basta con ir a docker desktop, volver a ejecutar los backend (solo apretando que se inicien otra vez), con eso debería fucionar correctamente.
-- Se definio uun usuario comun para probar rapidamente las estadisticas, el cual es:
-  	○ username: duvan
-	○ password: 1234
-
+- Se definio un usuario comun para probar rapidamente las estadisticas, el cual es:
+```sh
+Username: duvan
+Password: 1234
+```
 ---
 
 ## 📚 Documentación útil
