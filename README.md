@@ -84,6 +84,7 @@ Aclaración: En esa carpeta se debe abrir una terminal y usar esos comandos.
 - Se considera que un **sector** es una **categoría**.
 - Cada **sector** tiene asignado un **punto geoespacial** (latitud y longitud).
 - Se considera la implementación de un sector según las especificaciones del ayudante pertinente, un sector como un punto en el espacio
+- Se definio que una fecha cercana a Vencer una Tarea, serán 3 dias.
 - Respecto a cada pregunta:
 
 ○ ¿Cuál es la tarea más cercana al usuario (que esté pendiente)?
@@ -127,6 +128,7 @@ registrado del usuario?
 ## 🔄 Notas adicionales
 
 - Los datos de ejemplo se cargan automáticamente al iniciar la base de datos (`dbCreate.sql` y `populate.sql`).
+- La notificacion no se muestrará con el susuario definido a continuacion, debido a que ya paso el plazo de la tarea, por lo tanto no se cuenta para el plazo de 3 días definido anteriormente, para esto se recomienda que se cree una nueva tarea con un plazo de vencimimento dentro de 3 dias a partir del dia de prueba y luego volver a iniciar sesión.
 - Si necesitas reiniciar la base de datos desde cero:
   ```sh
   docker compose down -v
@@ -135,7 +137,7 @@ registrado del usuario?
 - Si cambias variables de entorno, recuerda reconstruir los contenedores afectados.
 - Si en algún momento una de las peticiones dice que no se pueden encontrar datos no necesariamente es que fallo, si no que se debe refrescar otra vez, ósea apretar otro botón y volver al anterior para que funcione debido a temas de latencia y tiempos de espera, ya que como se montan en docker compose, puede afectar la velocidad de conexión de internet y los llamados debido a las diversas replicas que se manejan.
 - Si falla al levantar en docker compose oh hay errores de CORS, basta con ir a docker desktop, volver a ejecutar los backend (solo apretando que se inicien otra vez), con eso debería fucionar correctamente.
-- Se definio un usuario comun para probar rapidamente las estadisticas, el cual es:
+- Se definio un usuario común para probar rapidamente las estadisticas, el cual es:
 ```sh
 Username: duvan
 Password: 1234
